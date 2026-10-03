@@ -1,0 +1,1868 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory Dashboard</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+    
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+    
+        /* =========================
+           HEADER
+        ========================= */
+    
+        header {
+            background: #172554;
+            color: white;
+            padding: 26px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+    
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+    
+        header p {
+            margin: 7px 0 0;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+    
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+    
+        main {
+            max-width: 1150px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+    
+        /* =========================
+           DASHBOARD CARDS
+        ========================= */
+    
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+    
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        }
+    
+        .cards .card {
+            margin-top: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+    
+        .cards .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+        }
+    
+        .card h2 {
+            margin: 0;
+            color: #334155;
+            font-size: 19px;
+            font-weight: 700;
+        }
+    
+        .value {
+            margin-top: 14px;
+            font-size: 30px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+    
+        .low-stock {
+            color: #dc2626;
+        }
+    
+        .status {
+            margin-top: 25px;
+            padding: 14px;
+            background: white;
+            border-radius: 8px;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+    
+        /* =========================
+           TABLES
+        ========================= */
+    
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+    
+        th {
+            padding: 12px 18px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+    
+        td {
+            padding: 15px 18px;
+            text-align: center;
+            background: #f8fafc;
+            color: #374151;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+    
+        td:first-child {
+            border-left: 1px solid #e5e7eb;
+            border-radius: 8px 0 0 8px;
+        }
+    
+        td:last-child {
+            border-right: 1px solid #e5e7eb;
+            border-radius: 0 8px 8px 0;
+        }
+    
+        tbody tr {
+            transition: transform 0.15s ease;
+        }
+    
+        tbody tr:hover td {
+            background: #eef2ff;
+        }
+    
+        /* =========================
+           LOW STOCK TABLE
+        ========================= */
+    
+        #low-stock-table td:first-child {
+            font-weight: 700;
+            color: #111827;
+        }
+    
+        #low-stock-table td:nth-child(3) {
+            font-weight: 700;
+            color: #dc2626;
+        }
+    
+        /* =========================
+           ALL PRODUCTS HEADER
+        ========================= */
+    
+        .products-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+    
+        .products-header h2 {
+            margin: 0;
+            color: #334155;
+            font-size: 20px;
+            font-weight: 700;
+        }
+    
+        #product-count {
+            padding: 5px 11px;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    
+        /* =========================
+           SEARCH
+        ========================= */
+    
+        #product-search {
+            width: 100%;
+            height: 44px;
+            padding: 10px 15px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+    
+        #product-search::placeholder {
+            color: #9ca3af;
+        }
+    
+        #product-search:hover {
+            border-color: #94a3b8;
+            background: white;
+        }
+    
+        #product-search:focus {
+            background: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+    
+        /* =========================
+           PRODUCT DETAILS
+        ========================= */
+    
+        #products-table td:first-child {
+            font-weight: 700;
+            color: #111827;
+        }
+    
+        #products-table td:nth-child(2) {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+        }
+    
+        #products-table td:nth-child(3) {
+            color: #475569;
+        }
+    
+        #products-table td:nth-child(4) {
+            font-weight: 700;
+            color: #111827;
+        }
+    
+        #products-table td:nth-child(5) {
+            font-weight: 700;
+            color: #111827;
+        }
+    
+        #products-table td:nth-child(6) {
+            color: #475569;
+        }
+    
+        /* =========================
+           FORM FIELDS
+        ========================= */
+    
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+    
+        .form-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    
+        .form-field input,
+        .form-field select {
+            width: 100%;
+            height: 44px;
+            padding: 10px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+    
+        .form-field input:hover,
+        .form-field select:hover {
+            background: white;
+            border-color: #94a3b8;
+        }
+    
+        .form-field input:focus,
+        .form-field select:focus {
+            background: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+    
+        /* =========================
+           ADD NEW PRODUCT
+        ========================= */
+    
+        #product-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px 28px;
+            margin-top: 25px;
+        }
+    
+        #product-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    
+        #product-form input {
+            width: 100%;
+            height: 44px;
+            padding: 10px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+    
+        #product-form input:hover {
+            background: white;
+            border-color: #94a3b8;
+        }
+    
+        #product-form input:focus {
+            background: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+    
+        /* =========================
+           BUTTON ROWS
+        ========================= */
+    
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 22px;
+        }
+    
+        #product-form .form-buttons,
+        #edit-product-form .form-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+    
+        #product-form .form-buttons {
+            grid-column: 1 / -1;
+            margin-top: 5px;
+        }
+    
+        #product-form .form-buttons button,
+        #edit-product-form .form-buttons button,
+        .button-row button {
+            min-width: 130px;
+            height: 42px;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+    
+        /* =========================
+           ADD BUTTON
+        ========================= */
+    
+        #product-form .form-buttons button[type="submit"] {
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+    
+        #product-form .form-buttons button[type="submit"]:hover {
+            background: #1d4ed8;
+        }
+    
+        /* =========================
+           RESET BUTTON
+        ========================= */
+    
+        #product-form .reset-button,
+        #edit-product-form .reset-button {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+    
+        #product-form .reset-button:hover,
+        #edit-product-form .reset-button:hover {
+            background: #e2e8f0;
+        }
+    
+        /* =========================
+           FORM STATUS
+        ========================= */
+    
+        #product-form #form-status {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin: 0;
+            font-size: 14px;
+        }
+    
+        /* =========================
+           STOCK IN / STOCK OUT
+        ========================= */
+    
+        #stock-product,
+        #stock-quantity {
+            width: 100%;
+        }
+        .card:has(#stock-product) {
+    padding: 28px;
+}
+
+.card:has(#stock-product) h2 {
+    margin-bottom: 28px;
+}
+
+.card:has(#stock-product) .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 80px;
+    row-gap: 20px;
+}
+
+.card:has(#stock-product) .form-field label {
+    margin-bottom: 10px;
+}
+}
+}
+        .card:has(#stock-product) {
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        }
+    
+        #stock-in-btn {
+            background: #16a34a;
+            color: white;
+            border: none;
+        }
+    
+        #stock-in-btn:hover {
+            background: #15803d;
+            transform: translateY(-1px);
+        }
+    
+        #stock-out-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+        }
+    
+        #stock-out-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+    
+        #stock-message {
+            text-align: center;
+            margin: 16px 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+    
+        /* =========================
+           EDIT PRODUCT
+        ========================= */
+    
+        #edit-product-form {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            column-gap: 30px;
+            row-gap: 18px;
+            align-items: center;
+            max-width: 800px;
+            margin: 25px auto 0;
+        }
+    
+        #edit-product-form label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            text-align: right;
+        }
+    
+        #edit-product-form input {
+            width: 100%;
+            height: 42px;
+            padding: 10px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+    
+        #edit-product-form input:focus {
+            background: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+    
+        #edit-product-form .form-buttons {
+            grid-column: 1 / -1;
+            margin-top: 12px;
+        }
+    
+        #edit-product-form .form-buttons button[type="submit"] {
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+    
+        #edit-product-form .form-buttons button[type="submit"]:hover {
+            background: #1d4ed8;
+        }
+    
+        #edit-product-form #edit-form-status {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin: 0;
+        }
+    
+        /* =========================
+           EDIT / DELETE BUTTONS
+        ========================= */
+    
+        .edit-button,
+        .delete-button {
+            padding: 8px 16px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+    
+        .edit-button {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+    
+        .edit-button:hover {
+            background: #dbeafe;
+        }
+    
+        .delete-button {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            margin-left: 10px;
+        }
+    
+        .delete-button:hover {
+            background: #fee2e2;
+        }
+    
+        /* =========================
+           MOBILE
+        ========================= */
+    
+        @media (max-width: 850px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+    
+            #product-form {
+                grid-template-columns: 1fr;
+            }
+    
+            #product-form .form-buttons {
+                grid-column: 1;
+            }
+    
+            #product-form #form-status {
+                grid-column: 1;
+            }
+        }
+    
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+    
+            header h1 {
+                font-size: 22px;
+            }
+    
+            main {
+                margin: 20px auto;
+                padding: 0 12px;
+            }
+    
+            .cards {
+                grid-template-columns: 1fr;
+            }
+    
+            .card {
+                padding: 18px;
+            }
+    
+            #product-form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+    
+            #product-form .form-buttons {
+                grid-column: 1;
+            }
+    
+            #product-form #form-status {
+                grid-column: 1;
+            }
+    
+            #edit-product-form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                max-width: 100%;
+            }
+    
+            #edit-product-form label {
+                text-align: left;
+            }
+    
+            #edit-product-form .form-buttons {
+                grid-column: 1;
+            }
+    
+            #edit-product-form #edit-form-status {
+                grid-column: 1;
+            }
+    
+            .button-row {
+                flex-direction: column;
+            }
+    
+            .button-row button {
+                width: 100%;
+            }
+    
+            .products-header {
+                align-items: flex-start;
+                gap: 10px;
+            }
+    
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+    
+            th,
+            td {
+                white-space: nowrap;
+            }
+    
+            .edit-button,
+            .delete-button {
+                margin: 2px;
+            }
+        }
+    
+        @media (max-width: 500px) {
+            .products-header {
+                flex-direction: column;
+            }
+            @media (max-width: 768px) {
+            .card:has(#stock-product) .form-grid {
+            grid-template-columns: 1fr;
+    }
+}
+    
+            #product-count {
+                align-self: flex-start;
+            }
+        }
+        .transaction-history-scroll {
+         max-height: 300px;
+         overflow-y: auto;
+}
+.transaction-in {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background-color: #d1fae5;
+    color: #047857;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.transaction-out {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-weight: 600;
+    font-size: 13px;
+}
+.status-in-stock {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background-color: #d1fae5;
+    color: #047857;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.status-low-stock {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-weight: 600;
+    font-size: 13px;
+}
+.stock-overview {
+    margin-top: 20px;
+}
+
+.stock-overview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stock-overview-row:last-child {
+    border-bottom: none;
+}
+.recent-transactions {
+    margin-top: 20px;
+}
+
+.dashboard-transaction-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-transaction-row:last-child {
+    border-bottom: none;
+}
+
+.dashboard-transaction-row span {
+    font-weight: 600;
+}
+
+.dashboard-transaction-row strong {
+    font-size: 14px;
+}
+    </style>
+    
+    
+</head>
+
+<main>
+
+    <!-- Dashboard Summary -->
+    <div class="cards">
+
+        <div class="card">
+            <h2>Total Products</h2>
+            <div class="value" id="total-products">--</div>
+        </div>
+
+        <div class="card">
+            <h2>Total Units</h2>
+            <div class="value" id="total-units">--</div>
+        </div>
+
+        <div class="card">
+            <h2>Low Stock Products</h2>
+            <div class="value low-stock" id="low-stock">--</div>
+        </div>
+
+        <div class="card">
+            <h2>Inventory Value</h2>
+            <div class="value" id="inventory-value">--</div>
+        </div>
+
+    </div>
+    <div class="card stock-overview">
+        <h2>Stock Status Overview</h2>
+    
+        <div class="stock-overview-row">
+            <span>In Stock</span>
+            <span id="in-stock-count">--</span>
+        </div>
+    
+        <div class="stock-overview-row">
+            <span>Low Stock</span>
+            <span id="dashboard-low-stock-count">--</span>
+        </div>
+    </div>
+    <div class="card recent-transactions">
+        <h2>Recent Transactions</h2>
+    
+        <div id="dashboard-transactions">
+            Loading transactions...
+        </div>
+    </div>
+
+
+    <!-- Low Stock Products -->
+    <div class="card">
+
+        <h2>Low Stock Products</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Minimum Stock</th>
+                </tr>
+            </thead>
+
+            <tbody id="low-stock-table">
+                <tr>
+                    <td colspan="4">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <!-- Add New Product -->
+    <div class="card">
+
+        <h2>Add New Product</h2>
+
+        <form id="product-form">
+
+            <div class="form-field">
+                <label for="product-name">Product Name</label>
+                <input type="text" id="product-name" required>
+            </div>
+
+            <div class="form-field">
+                <label for="product-sku">SKU</label>
+                <input type="text" id="product-sku" required>
+            </div>
+
+            <div class="form-field">
+                <label for="product-category">Category</label>
+                <input type="text" id="product-category" required>
+            </div>
+
+            <div class="form-field">
+                <label for="product-quantity">Quantity</label>
+                <input type="number" id="product-quantity" min="0" required>
+            </div>
+
+            <div class="form-field">
+                <label for="product-price">Price</label>
+                <input type="number" id="product-price" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-field">
+                <label for="product-supplier">Supplier</label>
+                <input type="text" id="product-supplier">
+            </div>
+
+            <div class="form-field">
+                <label for="minimum-stock">Minimum Stock Level</label>
+                <input type="number" id="minimum-stock" min="0" required>
+            </div>
+
+            <div class="form-buttons">
+
+                <button type="submit">
+                    Add Product
+                </button>
+
+                <button type="reset" class="reset-button">
+                    Reset
+                </button>
+
+            </div>
+
+            <p id="form-status"></p>
+
+        </form>
+
+    </div>
+   
+<section class="card">
+    <h2>Stock In / Stock Out</h2>
+
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="stock-product">Product</label>
+            <select id="stock-product">
+                <option value="">Select Product</option>
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="stock-quantity">Quantity</label>
+            <input
+                type="number"
+                id="stock-quantity"
+                min="1"
+                placeholder="Enter quantity"
+            />
+        </div>
+    </div>
+
+    <div class="button-row">
+        <button type="button" id="stock-in-btn">
+            Stock In
+        </button>
+
+        <button type="button" id="stock-out-btn">
+            Stock Out
+        </button>
+    </div>
+
+    <p id="stock-message"></p>
+</section>
+
+
+
+<section class="card">
+    <h2>Transaction History</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Date & Time</th>
+                </tr>
+            </thead>
+
+            <tbody id="transaction-history-body">
+                <tr>
+                    <td colspan="4">Loading transactions...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+    <!-- All Products -->
+    <div class="card">
+
+        <h2>All Products</h2>
+
+        <input
+            type="text"
+            id="product-search"
+            placeholder="Search by product name or SKU..."
+        >
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>SKU</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Price</th>
+                    <th>Supplier</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="products-table">
+                <tr>
+                    <td colspan="7">Loading...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- Edit Product -->
+    <div class="card" id="edit-product-card" style="display: none;">
+
+        <h2>Edit Product</h2>
+
+        <form id="edit-product-form">
+
+            <input type="hidden" id="edit-product-id">
+
+            <div class="form-field">
+                <label for="edit-product-name">Product Name</label>
+                <input type="text" id="edit-product-name" required>
+            </div>
+
+            <div class="form-field">
+                <label for="edit-product-sku">SKU</label>
+                <input type="text" id="edit-product-sku" required>
+            </div>
+
+            <div class="form-field">
+                <label for="edit-product-category">Category</label>
+                <input type="text" id="edit-product-category" required>
+            </div>
+
+            <div class="form-field">
+                <label for="edit-product-quantity">Quantity</label>
+                <input type="number" id="edit-product-quantity" min="0" required>
+            </div>
+
+            <div class="form-field">
+                <label for="edit-product-price">Price</label>
+                <input type="number" id="edit-product-price" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-field">
+                <label for="edit-product-supplier">Supplier</label>
+                <input type="text" id="edit-product-supplier">
+            </div>
+
+            <div class="form-field">
+                <label for="edit-minimum-stock">Minimum Stock Level</label>
+                <input type="number" id="edit-minimum-stock" min="0" required>
+            </div>
+
+            <div class="form-buttons">
+
+                <button type="submit">
+                    Save Changes
+                </button>
+
+                <button
+                    type="button"
+                    id="cancel-edit"
+                    class="reset-button"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+            <p id="edit-form-status"></p>
+
+        </form>
+
+    </div>
+
+
+    <!-- Connection Status -->
+    <div class="status" id="status">
+        Connecting to server...
+    </div>
+
+</main>
+
+<script>
+
+    async function loadDashboard() {
+
+        const status = document.getElementById("status");
+
+        try {
+
+            const response = await fetch(
+                "https://smart-inventory-stock-management-1.onrender.com/dashboard/summary"
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to load dashboard");
+            }
+
+            const data = await response.json();
+
+            document.getElementById("total-products").textContent =
+                data.total_products;
+
+            document.getElementById("total-units").textContent =
+                data.total_units;
+
+            document.getElementById("low-stock").textContent =
+                data.low_stock_count;
+                const inStockCount =
+                data.total_products - data.low_stock_count;
+            document.getElementById("in-stock-count").textContent =
+               inStockCount;
+            document.getElementById("dashboard-low-stock-count").textContent =
+               data.low_stock_count;
+
+            document.getElementById("inventory-value").textContent =
+                "₹" + Number(data.inventory_value).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+            status.textContent = "Dashboard connected successfully";
+
+        } catch (error) {
+
+            status.textContent =
+                "Unable to load data. Check that the backend is running.";
+
+            console.error(error);
+        }
+    }
+
+
+    async function loadLowStock() {
+
+        const table = document.getElementById("low-stock-table");
+
+        try {
+
+            const response = await fetch(
+                "https://smart-inventory-stock-management-1.onrender.com/products/low-stock"
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to load low-stock products");
+            }
+
+            const products = await response.json();
+
+            table.innerHTML = "";
+
+            if (products.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4">No low-stock products</td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            products.forEach(function(product) {
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    product.name,
+                    product.sku,
+                    product.quantity,
+                    product.minimum_stock_level
+                ];
+
+                values.forEach(function(value) {
+
+                    const cell = document.createElement("td");
+
+                    cell.textContent = value;
+
+                    row.appendChild(cell);
+                });
+
+                table.appendChild(row);
+            });
+
+        } catch (error) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4">Unable to load low-stock products</td>
+                </tr>
+            `;
+
+            console.error(error);
+        }
+    }
+
+
+    async function loadProducts(search = "") {
+
+        const table = document.getElementById("products-table");
+
+        try {
+
+            let url = "https://smart-inventory-stock-management-1.onrender.com/products/";
+
+            if (search.trim() !== "") {
+
+                url =
+                    "https://smart-inventory-stock-management-1.onrender.com/products/?search=" +
+                    encodeURIComponent(search);
+            }
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Failed to load products");
+            }
+
+            const data = await response.json();
+
+            const products = data.items;
+
+            table.innerHTML = "";
+
+            if (products.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="7">No products found</td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            products.forEach(function(product) {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.sku}</td>
+                    <td>${product.category}</td>
+                    <td>${product.quantity}</td>
+                   <td>
+                   <span class="${product.quantity <= product.minimum_stock_level ? "status-low-stock" : "status-in-stock"}">
+                   ${product.quantity <= product.minimum_stock_level ? "Low Stock" : "In Stock"}
+                   </span>
+                   </td>
+                    <td>
+                    ₹${Number(product.price).toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}
+                    </td>
+                    <td>${product.supplier || "-"}</td>
+                    <td>
+                        <button
+                            class="edit-button"
+                            onclick="editProduct(${product.id})"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            class="delete-button"
+                            onclick="deleteProduct(${product.id})"
+                        >
+                            Delete
+                        </button>
+                    </td>
+                `;
+
+                table.appendChild(row);
+            });
+
+        } catch (error) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7">Unable to load products</td>
+                </tr>
+            `;
+
+            console.error(error);
+        }
+    }
+
+
+    async function deleteProduct(productId) {
+
+        const confirmed = confirm(
+            "Are you sure you want to delete this product?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            const response = await fetch(
+                `https://smart-inventory-stock-management-1.onrender.com/products/${productId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            if (!response.ok) {
+
+                const error = await response.json();
+
+                throw new Error(
+                    error.detail || "Failed to delete product"
+                );
+            }
+
+            await loadDashboard();
+
+            await loadLowStock();
+
+            await loadProducts();
+
+        } catch (error) {
+
+            alert(error.message);
+
+            console.error(error);
+        }
+    }
+
+
+    document.getElementById("product-form").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const formStatus =
+                document.getElementById("form-status");
+
+            const product = {
+
+                name:
+                    document.getElementById("product-name").value,
+
+                sku:
+                    document.getElementById("product-sku").value,
+
+                category:
+                    document.getElementById("product-category").value,
+
+                quantity:
+                    Number(
+                        document.getElementById("product-quantity").value
+                    ),
+
+                price:
+                    Number(
+                        document.getElementById("product-price").value
+                    ),
+
+                supplier:
+                    document.getElementById("product-supplier").value,
+
+                minimum_stock_level:
+                    Number(
+                        document.getElementById("minimum-stock").value
+                    )
+            };
+
+            try {
+
+                const response = await fetch(
+                    "https://smart-inventory-stock-management-1.onrender.com/products/",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(product)
+                    }
+                );
+
+                if (!response.ok) {
+
+                    const error = await response.json();
+
+                    throw new Error(
+                        error.detail || "Failed to add product"
+                    );
+                }
+
+                formStatus.textContent =
+                    "Product added successfully!";
+
+                formStatus.style.color = "green";
+
+                document.getElementById("product-form").reset();
+
+                await loadDashboard();
+
+                await loadLowStock();
+
+                await loadProducts();
+
+            } catch (error) {
+
+                formStatus.textContent = error.message;
+
+                formStatus.style.color = "red";
+
+                console.error(error);
+            }
+        }
+    );
+
+
+    async function editProduct(productId) {
+
+        try {
+
+            const response = await fetch(
+                `https://smart-inventory-stock-management-1.onrender.com/products/${productId}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to load product");
+            }
+
+            const product = await response.json();
+
+            document.getElementById("edit-product-id").value =
+                product.id;
+
+            document.getElementById("edit-product-name").value =
+                product.name;
+
+            document.getElementById("edit-product-sku").value =
+                product.sku;
+
+            document.getElementById("edit-product-category").value =
+                product.category;
+
+            document.getElementById("edit-product-quantity").value =
+                product.quantity;
+
+            document.getElementById("edit-product-price").value =
+                product.price;
+
+            document.getElementById("edit-product-supplier").value =
+                product.supplier || "";
+
+            document.getElementById("edit-minimum-stock").value =
+                product.minimum_stock_level;
+
+            document.getElementById("edit-product-card").style.display =
+                "block";
+
+            document.getElementById("edit-product-card").scrollIntoView({
+                behavior: "smooth"
+            });
+
+        } catch (error) {
+
+            alert(error.message);
+
+            console.error(error);
+        }
+    }
+
+
+    document.getElementById("edit-product-form").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const productId =
+                document.getElementById("edit-product-id").value;
+
+            const updatedProduct = {
+
+                name:
+                    document.getElementById("edit-product-name").value,
+
+                sku:
+                    document.getElementById("edit-product-sku").value,
+
+                category:
+                    document.getElementById("edit-product-category").value,
+
+                quantity:
+                    Number(
+                        document.getElementById("edit-product-quantity").value
+                    ),
+
+                price:
+                    Number(
+                        document.getElementById("edit-product-price").value
+                    ),
+
+                supplier:
+                    document.getElementById("edit-product-supplier").value,
+
+                minimum_stock_level:
+                    Number(
+                        document.getElementById("edit-minimum-stock").value
+                    )
+            };
+
+            try {
+
+                const response = await fetch(
+                    `https://smart-inventory-stock-management-1.onrender.com/products/${productId}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(updatedProduct)
+                    }
+                );
+
+                if (!response.ok) {
+
+                    const error = await response.json();
+
+                    throw new Error(
+                        error.detail || "Failed to update product"
+                    );
+                }
+
+                document.getElementById("edit-form-status").textContent =
+                    "Product updated successfully!";
+
+                document.getElementById("edit-form-status").style.color =
+                    "green";
+
+                await loadDashboard();
+
+                await loadLowStock();
+
+                await loadProducts();
+
+                document.getElementById("edit-product-card").style.display =
+                    "none";
+
+            } catch (error) {
+
+                document.getElementById("edit-form-status").textContent =
+                    error.message;
+
+                document.getElementById("edit-form-status").style.color =
+                    "red";
+
+                console.error(error);
+            }
+        }
+    );
+
+
+    document.getElementById("cancel-edit").addEventListener(
+        "click",
+        function() {
+
+            document.getElementById("edit-product-card").style.display =
+                "none";
+        }
+    );
+
+
+    document.getElementById("product-search").addEventListener(
+        "input",
+        function() {
+
+            const searchText = this.value;
+
+            loadProducts(searchText);
+        }
+    );
+
+async function loadStockProducts() {
+    try {
+        const response = await fetch("https://smart-inventory-stock-management-1.onrender.com/products/?limit=100");
+
+        if (!response.ok) {
+            throw new Error("Failed to load products");
+        }
+
+        const data = await response.json();
+
+        const dropdown = document.getElementById("stock-product");
+
+        dropdown.innerHTML = '<option value="">Select Product</option>';
+
+        data.items.forEach(function(product) {
+            const option = document.createElement("option");
+
+            option.value = product.id;
+            option.textContent = `${product.name} (Stock: ${product.quantity})`;
+
+            dropdown.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Error loading stock products:", error);
+    }
+}
+
+document.getElementById("stock-in-btn").addEventListener("click", async function() {
+    const productId = document.getElementById("stock-product").value;
+    const quantity = document.getElementById("stock-quantity").value;
+    const message = document.getElementById("stock-message");
+
+    if (!productId || !quantity || quantity <= 0) {
+        message.textContent = "Please select a product and enter a valid quantity.";
+        return;
+    }
+
+    try {
+        const response = await fetch("https://smart-inventory-stock-management-1.onrender.com/stock/transaction", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                product_id: Number(productId),
+                transaction_type: "IN",
+                quantity: Number(quantity)
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            message.textContent = data.detail || "Stock In failed.";
+            return;
+        }
+
+        message.textContent = "Stock In successful!";
+
+        document.getElementById("stock-quantity").value = "";
+
+        await loadDashboard();
+        await loadLowStock();
+        await loadProducts();
+        await loadStockProducts();
+        await loadTransactionHistory();
+        await loadDashboardTransactions();
+
+    } catch (error) {
+        console.error(error);
+        message.textContent = "Could not connect to the backend.";
+    }
+});
+
+
+document.getElementById("stock-out-btn").addEventListener("click", async function() {
+    const productId = document.getElementById("stock-product").value;
+    const quantity = document.getElementById("stock-quantity").value;
+    const message = document.getElementById("stock-message");
+
+    if (!productId || !quantity || quantity <= 0) {
+        message.textContent = "Please select a product and enter a valid quantity.";
+        return;
+    }
+
+    try {
+        const response = await fetch("https://smart-inventory-stock-management-1.onrender.com/stock/transaction", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                product_id: Number(productId),
+                transaction_type: "OUT",
+                quantity: Number(quantity)
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            message.textContent = data.detail || "Stock Out failed.";
+            return;
+        }
+
+        message.textContent = "Stock Out successful!";
+
+        document.getElementById("stock-quantity").value = "";
+
+        await loadDashboard();
+        await loadLowStock();
+        await loadProducts();
+        await loadStockProducts();
+        await loadTransactionHistory();
+        await loadDashboardTransactions();
+
+    } catch (error) {
+        console.error(error);
+        message.textContent = "Could not connect to the backend.";
+    }
+});
+
+
+
+async function loadTransactionHistory() {
+    try {
+        const productsResponse = await fetch(
+            "https://smart-inventory-stock-management-1.onrender.com/products/?limit=100"
+        );
+
+        if (!productsResponse.ok) {
+            throw new Error("Failed to load products");
+        }
+
+        const productsData = await productsResponse.json();
+
+        const productNames = {};
+
+        productsData.items.forEach(function(product) {
+            productNames[product.id] = product.name;
+        });
+
+        const response = await fetch(
+            "https://smart-inventory-stock-management-1.onrender.com/stock/transactions"
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to load transactions");
+        }
+
+        const data = await response.json();
+
+        const tableBody = document.getElementById(
+            "transaction-history-body"
+        );
+
+        if (data.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4">No transactions found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        tableBody.innerHTML = "";
+
+        data.forEach(function(transaction) {
+            const row = document.createElement("tr");
+
+            const productName =
+                productNames[transaction.product_id] || "Unknown Product";
+
+            row.innerHTML = `
+                <td>${productName}</td>
+                <td>
+                <span class="${transaction.transaction_type === "IN" ? "transaction-in" : "transaction-out"}">
+                ${transaction.transaction_type}
+                </span>
+                </td>
+                <td>${transaction.quantity}</td>
+                <td>${new Date(transaction.created_at + "Z").toLocaleString("en-IN")}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error loading transaction history:", error);
+    }
+}
+async function loadDashboardTransactions() {
+    try {
+        const productsResponse = await fetch(
+            "https://smart-inventory-stock-management-1.onrender.com/products/?limit=100"
+        );
+
+        if (!productsResponse.ok) {
+            throw new Error("Failed to load products");
+        }
+
+        const productsData = await productsResponse.json();
+
+        const productNames = {};
+
+        productsData.items.forEach(function(product) {
+            productNames[product.id] = product.name;
+        });
+
+        const response = await fetch(
+            "https://smart-inventory-stock-management-1.onrender.com/stock/transactions"
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to load transactions");
+        }
+
+        const data = await response.json();
+
+        const container = document.getElementById(
+            "dashboard-transactions"
+        );
+
+        const recentTransactions = data.slice(0, 5);
+
+        if (recentTransactions.length === 0) {
+            container.textContent = "No transactions found.";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        recentTransactions.forEach(function(transaction) {
+            const row = document.createElement("div");
+
+            row.className = "dashboard-transaction-row";
+
+            const productName =
+                productNames[transaction.product_id] || "Unknown Product";
+
+            row.innerHTML = `
+                <span>
+                    ${productName} -
+                    ${transaction.transaction_type === "IN" ? "Stock In" : "Stock Out"}
+                </span>
+                <strong>${transaction.quantity} units</strong>
+            `;
+
+            container.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error loading dashboard transactions:", error);
+    }
+}
+ loadDashboard();
+ loadLowStock();
+ loadProducts();
+ loadStockProducts();
+ loadTransactionHistory();
+ loadDashboardTransactions();
+
+</script>
+
+
+</body>
+</html>
