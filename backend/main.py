@@ -1,11 +1,11 @@
 """FastAPI entry point for the Smart Inventory backend."""
-from fastapi.middleware.cors import CORSMiddleware
 from backend.routers import products
 from backend.routers import dashboard
 from backend.routers import stock
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database import Base, engine
 import backend.models  # registers Product so create_all() can build the table
